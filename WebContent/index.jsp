@@ -21,13 +21,25 @@ body {
 	border: solid #CACACA 1px;
 	cursor: pointer;
 	}
-.non_display {
+.non_display_subpage {
 	display: none;
+	opacity: 0.68;
+	background-image: url(images/subpage_back.jpg);
+	background-repeat: no-repeat;
+	background-position: center;
 }
 .logo {
 	position: absolute;
 	top: 0px;
 	right: auto;
+}
+.map {
+	position: absolute;
+	height: 500px;
+	width: 97%;
+	right: 1.5%;
+	z-index: -1;
+	top: 100px;
 }
 .title_label {
 	font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
@@ -53,7 +65,7 @@ body {
 	border-right-style: inset;
 	border-bottom-style: inset;
 	border-left-style: inset;
-	color: #999;
+	color: #777;
 }
 .normal_button {
 	font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
@@ -80,12 +92,13 @@ body {
 <img id="result_image" src="images/result.png" width="30" height="30" alt="result icon" />
 <!-- End: Buttons for multiple jobs -->
 </div>
-
 <br />
+
 <!-- subpage for login -->
-<div id="subpage_login" align="center" class="non_display">
-<img src="images/separator.png" width="640" height="10" alt="separator" /><br />
+<div id="subpage_login" align="center" class="non_display_subpage">
+<img src="images/separator.png" width="800" height="10" alt="separator" /><br />
 <label class="title_label">Login</label> <br />
+<form id="login_form">
 <img src="images/user.png" width="15" height="15" alt="user" />&nbsp;&nbsp;
 <font class="normal_font">User:</font>
 <img src="images/transparent.png" width="34" height="10" alt="transperant" />
@@ -96,28 +109,38 @@ body {
 <img src="images/transparent.png" width="5" height="10" alt="transperant" />
 <input name="password_textField" class="input_font" type="password" size="19" /><br />
 <img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
-<button id="login_button" class="normal_button" >Login</button>
+<script language="javascript">
+//Add function for "login" and "register" button
+function login() {
+	alert("Code for login is coming!");
+}
+function register() {
+	alert("Code for register is coming!");
+}
+</script>
+<button id="login_button" class="normal_button" onclick="login()">Login</button>
 <img src="images/transparent.png" width="15" height="3" alt="transperant" />
-<button id="register_button" class="normal_button" >Register</button><br />
+<button id="register_button" class="normal_button" onclick="register()">Register</button><br />
+</form>
 <img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
-<img src="images/separator.png" width="640" height="10" alt="separator" /><br />
+<img src="images/separator.png" width="800" height="10" alt="separator" /><br />
 </div>
 <!-- subpage for search -->
-<div id="subpage_search" align="center" class="non_display">
-<img src="images/separator.png" width="640" height="10" alt="separator" /><br />
+<div id="subpage_search" align="center" class="non_display_subpage">
+<img src="images/separator.png" width="800" height="10" alt="separator" /><br />
 <img src="images/white.png" width="100" height="100" alt="white" /> <br />
-<img src="images/separator.png" width="640" height="10" alt="separator" /><br />
+<img src="images/separator.png" width="800" height="10" alt="separator" /><br />
 </div>
 <!-- subpage for result -->
-<div id="subpage_result" align="center" class="non_display">
-<img src="images/separator.png" width="640" height="10" alt="separator" /><br />
+<div id="subpage_result" align="center" class="non_display_subpage">
+<img src="images/separator.png" width="800" height="10" alt="separator" /><br />
 <img src="images/white.png" width="100" height="100" alt="white" /> <br />
-<img src="images/separator.png" width="640" height="10" alt="separator" /><br />
+<img src="images/separator.png" width="800" height="10" alt="separator" /><br />
 </div>
 
 <br />
 <div align="center">
-<img src="images/white.png" width="640" height="480" alt="map" /> </div>
+<img src="images/white.png" class="map" alt="map" /> </div>
 
 <!-- Mouse over notification -->
 <script type="text/javascript">
@@ -127,7 +150,7 @@ $('.mooTest :first').wTooltip('opacity', 0.2);
 console.log($('.mooTest').wTooltip('opacity'));
 
 $("#login_image").wTooltip({
-	title: "Login",
+	title: "Login/Logout",
 	theme: "black"
 });
 $("#search_image").wTooltip({
