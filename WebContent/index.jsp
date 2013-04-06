@@ -23,7 +23,7 @@ body {
 	}
 .non_display_subpage {
 	display: none;
-	opacity: 0.68;
+	opacity: 0.78;
 	background-image: url(images/subpage_back.jpg);
 	background-repeat: no-repeat;
 	background-position: center;
@@ -70,19 +70,17 @@ body {
 .normal_button {
 	font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
 	font-size: 16px;
-	color: #666;
+	color: #444;
 	background-color: #CCC;
 	border: thin outset #CCC;
 }
 </style>
-
-
 </head>
 
 <body>
-<img src="images/logo_title.png" alt="logo" width="357" height="150" class="logo" /> 
-<div align="center">
-<img src="images/transparent.png" width="10" height="10" alt="transparent" /><br />
+<img src="images/logo_title.png" alt="logo" width="237" height="100" class="logo" /> 
+<div align="right">
+<img src="images/transparent.png" width="10" height="8" alt="transparent" /><br />
 <img src="images/transparent.png" width="500" height="10" alt="transparent" />
 <!-- Buttons for multiple jobs -->
 <img id="login_image" src="images/login.png" width="30" height="30" alt="login icon" />
@@ -98,17 +96,20 @@ body {
 <div id="subpage_login" align="center" class="non_display_subpage">
 <img src="images/separator.png" width="800" height="10" alt="separator" /><br />
 <label class="title_label">Login</label> <br />
+
 <form id="login_form">
 <img src="images/user.png" width="15" height="15" alt="user" />&nbsp;&nbsp;
 <font class="normal_font">User:</font>
 <img src="images/transparent.png" width="34" height="10" alt="transperant" />
 <input name="user_textField" class="input_font" type="text" size="19" /><br />
 <img src="images/transparent.png" width="5" height="3" alt="transperant" /><br />
+
 <img src="images/password.png" width="15" height="15" alt="password" />&nbsp;&nbsp;
 <font class="normal_font">Password:</font>
 <img src="images/transparent.png" width="5" height="10" alt="transperant" />
 <input name="password_textField" class="input_font" type="password" size="19" /><br />
 <img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
+
 <script language="javascript">
 //Add function for "login" and "register" button
 function login() {
@@ -125,22 +126,91 @@ function register() {
 <img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
 <img src="images/separator.png" width="800" height="10" alt="separator" /><br />
 </div>
+<!-- End: subpage for login -->
+
 <!-- subpage for search -->
 <div id="subpage_search" align="center" class="non_display_subpage">
 <img src="images/separator.png" width="800" height="10" alt="separator" /><br />
-<img src="images/white.png" width="100" height="100" alt="white" /> <br />
+<label class="title_label">Search</label><br />
+<img src="images/8coupons_logo.png" width="51" height="12" alt="8coupon logo" /><br />
+<img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
+
+<form id="search_form">
+<img src="images/zipcode.png" width="15" height="15" alt="zipcode" />&nbsp;&nbsp;
+<font class="normal_font">Zip Code:</font>
+<img src="images/transparent.png" width="34" height="10" alt="transperant" />
+<input name="zipcode_textField" class="input_font" type="text" size="19" value="Empty is valid"/><br />
+<img src="images/transparent.png" width="5" height="3" alt="transperant" /><br />
+
+<img src="images/mileradius.png" width="15" height="15" alt="mileradius" />&nbsp;&nbsp;
+<font class="normal_font">Mile Radius:</font>
+<img src="images/transparent.png" width="15" height="10" alt="transperant" />
+<input name="mileradius_textField" class="input_font" type="text" size="19" value="Empty is valid"/><br />
+<img src="images/transparent.png" width="5" height="3" alt="transperant" /><br />
+
+<img src="images/category.png" width="15" height="15" alt="mileradius" />&nbsp;&nbsp;
+<font class="normal_font">Category:</font>
+<img src="images/transparent.png" width="34" height="10" alt="transperant" />
+<select name="category_select" class="input_font" >
+<option value="any">- Any -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
+<option value="restaurants">Restaurants</option>
+<option value="entertainment">Entertainment</option>
+<option value="beauty & spa">Beauty & Spa</option>
+<option value="services">Services</option>
+<option value="shopping">Shopping</option>
+</select><br />
+<img src="images/transparent.png" width="5" height="3" alt="transperant" /><br />
+
+<img src="images/keyword.png" width="15" height="15" alt="keyword" />&nbsp;&nbsp;
+<font class="normal_font">Keyword:</font>
+<img src="images/transparent.png" width="34" height="10" alt="transperant" />
+<input name="keyword_textField" class="input_font" type="text" size="19" value="Empty is valid"/><br />
+<img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
+
+<script language="javascript">
+//Add function for "search" button
+function search() {
+	alert("Code for search is coming!");
+}
+</script>
+<button id="search_button" class="normal_button" onclick="search()">Search</button><br />
+</form>
+<img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
 <img src="images/separator.png" width="800" height="10" alt="separator" /><br />
 </div>
+<!-- End: subpage for search -->
+
 <!-- subpage for result -->
 <div id="subpage_result" align="center" class="non_display_subpage">
 <img src="images/separator.png" width="800" height="10" alt="separator" /><br />
-<img src="images/white.png" width="100" height="100" alt="white" /> <br />
+<label class="title_label">Result</label><br />
+<img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
+
+<font class="normal_font">Select Stores (multiple choices):</font><br />
+<img src="images/transparent.png" width="5" height="3" alt="transperant" /><br />
+<select id="store_select" name="store_select" size="13" multiple="multiple" class="input_font" style="width:500px">
+<option value="">To be continue;</option>
+<option value="">To be continue;</option>
+</select><br />
+<img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
+
+<script language="javascript">
+//Add function for "search" button
+function choose() {
+	alert("Code for choose is coming!");
+}
+</script>
+<button id="choose_button" class="normal_button" onclick="choose()">Choose</button><br />
+</form>
+<img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
 <img src="images/separator.png" width="800" height="10" alt="separator" /><br />
 </div>
-
+<!-- End: subpage for result -->
 <br />
+
 <div align="center">
-<img src="images/white.png" class="map" alt="map" /> </div>
+<iframe class="map" src="https://maps.google.com/?ie=UTF8&amp;ll=40.806858,-73.961163&amp;spn=0.035342,0.061111&amp;t=m&amp;z=14&amp;output=embed"></iframe><br />
+</div>
 
 <!-- Mouse over notification -->
 <script type="text/javascript">
