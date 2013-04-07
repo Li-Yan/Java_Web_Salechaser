@@ -1,4 +1,3 @@
-<%@page import="org.apache.jasper.tagplugins.jstl.core.ForEach"%>
 <%@page import="shopping.SaleStore" %>
 <%@page import="shopping.SharedMemory" %>
 <%@page import="shopping.SearchServlet" %>
@@ -209,9 +208,6 @@ for (SaleStore store : SharedMemory.stores) {
 	int l = s.length();
 	int Max_Length = 70;
 	if (l > Max_Length) s = s.substring(0, Max_Length);
-	else {
-		for (int i = 0; i < Max_Length - l; i++) s = s + "&nbsp;";
-	}
 %>
 	<div class="result_checkbox">
 	<input type="checkbox" value="<%out.print(store.ID); %>">
@@ -264,9 +260,9 @@ $("#result_image").wTooltip({
 $(document).ready(function(){
 	//login_image
 	$("#login_image").click(function() {
-		$("#subpage_search").slideUp(700);
-		$("#subpage_login").slideToggle(700);
-		$("#subpage_result").slideUp(700);
+		$("#subpage_login").fadeToggle("slow");
+		$("#subpage_search").hide();
+		$("#subpage_result").hide();
 	});
 	$("#login_image").mousedown(function() {
 		document.getElementById("login_image").src = "images/login_down.png";
@@ -291,9 +287,9 @@ $(document).ready(function(){
 	});
 	//search_image
 	$("#search_image").click(function() {
-		$("#subpage_login").slideUp(700);
-		$("#subpage_search").slideToggle(700);
-		$("#subpage_result").slideUp(700);
+		$("#subpage_login").hide();
+		$("#subpage_search").fadeToggle("slow");
+		$("#subpage_result").hide();
 	});
 	$("#search_image").mousedown(function() {
 		document.getElementById("search_image").src = "images/search_down.png";
@@ -318,9 +314,9 @@ $(document).ready(function(){
 	});
 	//result_image
 	$("#result_image").click(function() {
-		$("#subpage_login").slideUp(700);
-		$("#subpage_search").slideUp(700);
-		$("#subpage_result").slideToggle(700);
+		$("#subpage_login").hide();
+		$("#subpage_search").hide();
+		$("#subpage_result").fadeToggle("slow");
 	});
 	$("#result_image").mousedown(function() {
 		document.getElementById("result_image").src = "images/result_down.png";
@@ -351,7 +347,7 @@ $(document).ready(function(){
 	$("#register_button").mousedown(function() {
 		alert("Code for register is coming!");
 	});
-	$("#search_button").mouseup(function() {
+	$("#search_button").mousedown(function() {
 		zipcode_textField = document.getElementById("zipcode_textField");
 		zipcode = zipcode_textField.value;
 		if (zipcode == "Empty is valid") {

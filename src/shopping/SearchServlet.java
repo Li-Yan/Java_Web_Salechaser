@@ -93,10 +93,6 @@ public class SearchServlet extends HttpServlet {
 		String result = saleSearch(parameter);
 		parseResult(result);
 		
-		for (SaleStore store : SharedMemory.stores) {
-			System.out.println(store.name);
-		}
-		
 		SharedMemory.show_result = true;
 		response.sendRedirect("../index.jsp");
 	}
