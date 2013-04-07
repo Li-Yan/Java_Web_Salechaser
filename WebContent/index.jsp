@@ -26,15 +26,9 @@ body {
 	border: solid #CACACA 1px;
 	cursor: pointer;
 	}
-.display_subpage {
-	opacity: 0.78;
-	background-image: url(images/subpage_back.jpg);
-	background-repeat: no-repeat;
-	background-position: center;
-}
 .non_display_subpage {
 	display: none;
-	opacity: 0.78;
+	opacity: 0.88;
 	background-image: url(images/subpage_back.jpg);
 	background-repeat: no-repeat;
 	background-position: center;
@@ -85,6 +79,15 @@ body {
 	background-color: #CCC;
 	border: thin outset #CCC;
 }
+.result_checkbox {
+	position: absolute;
+	left: 20%;
+}
+.result_title_font {
+	font-family: "Goudy Old Style";
+	font-size: 11px;
+	color: #555;
+}
 </style>
 </head>
 
@@ -125,18 +128,9 @@ var result_active = 0;
 <input name="password_textField" class="input_font" type="password" size="19" onclick="this.select();"/><br />
 <img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
 
-<script language="javascript">
-//Add function for "login" and "register" button
-function login() {
-	alert("Code for login is coming!");
-}
-function register() {
-	alert("Code for register is coming!");
-}
-</script>
-<button id="login_button" class="normal_button" onclick="login()">Login</button>
+<button id="login_button" class="normal_button" >Login</button>
 <img src="images/transparent.png" width="15" height="3" alt="transperant" />
-<button id="register_button" class="normal_button" onclick="register()">Register</button><br />
+<button id="register_button" class="normal_button" >Register</button><br />
 </form>
 <img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
 <img src="images/separator.png" width="800" height="10" alt="separator" /><br />
@@ -183,37 +177,7 @@ function register() {
 <input id="keyword_textField" name="keyword_textField" class="input_font" type="text" size="19" value="Empty is valid" onclick="this.select();"/><br />
 <img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
 
-<script language="javascript">
-//Add function for "search" button
-function search() {
-	
-	zipcode_textField = document.getElementById("zipcode_textField");
-	zipcode = zipcode_textField.value;
-	if (zipcode == "Empty is valid") {
-		zipcode = "";
-	}
-	else if (!valid_zipCode(zipcode)) {
-		alert("Error: Zip Code should be 5 digits.");
-		return;
-	}
-	
-	mileradius_textField = document.getElementById("mileradius_textField");
-	mileradius = mileradius_textField.value;
-	if (mileradius == "Empty is valid") {
-		mileradius = "";
-	}
-	else if (!valid_mileRadius(mileradius)) {
-		alert("Error: Mile Radius should an integer.");
-		return;
-	}
-	
-	form = document.getElementById("search_form");
-	form.action = "shopping/SearchServlet";
-	form.method = "get";
-	form.submit();
-}
-</script>
-<button id="search_button" class="normal_button" onclick="search()">Search</button><br />
+<button id="search_button" class="normal_button" >Search</button><br />
 </form>
 <img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
 <img src="images/separator.png" width="800" height="10" alt="separator" /><br />
@@ -234,31 +198,40 @@ result_active = 1;
 <label class="title_label">Result</label><br />
 <img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
 
-<font class="normal_font">Select Stores (multiple choices):</font><br />
+<font class="normal_font">Select Stores</font><br />
 <img src="images/transparent.png" width="5" height="3" alt="transperant" /><br />
-<form>
-<select id="store_select" name="store_select" size="13" multiple="multiple" class="input_font" style="width:500px">
-<% for (SaleStore store : SharedMemory.stores) { 
-	String s = store.name + ": " + store.dealTitle;
-%>
-	<option value="<%out.print(store.ID);%>"><%out.print(s);%></option>
-<%} %>
-</select><br />
-<img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
 
-<script language="javascript">
-//Add function for "search" button
-function choose() {
-	alert("Code for choose is coming!");
-}
-</script>
-<button id="choose_button" class="normal_button" onclick="choose()">Choose</button><br />
+<form>
+<% int count = 0;
+for (SaleStore store : SharedMemory.stores) { 
+	if ((count++) == 10) break;
+	String s = store.dealTitle;
+	int l = s.length();
+	int Max_Length = 70;
+	if (l > Max_Length) s = s.substring(0, Max_Length);
+	else {
+		for (int i = 0; i < Max_Length - l; i++) s = s + "&nbsp;";
+	}
+%>
+	<div class="result_checkbox">
+	<input type="checkbox" value="<%out.print(store.ID); %>">
+    <img src="<%out.print(store.showImage); %>" width="27" height="27" />
+    <font class="normal_font">&nbsp;<%out.print(store.name); %>: </font>
+    <font class="result_title_font"><%out.print(s); %></font><br />
+    </input>
+    </div><br />
+    <img src="images/transparent.png" width="5" height="10" alt="transperant" /><br />
+<%} %>
+<br />
+
+
+<button id="choose_button" class="normal_button" >Choose</button>
 </form>
+
 <img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
 <img src="images/separator.png" width="800" height="10" alt="separator" /><br />
 </div>
 <!-- End: subpage for result -->
-<br />
 
 <div align="center">
 <iframe class="map" src="https://maps.google.com/?ie=UTF8&amp;ll=40.806858,-73.961163&amp;spn=0.035342,0.061111&amp;t=m&amp;z=14&amp;output=embed"></iframe><br />
@@ -369,6 +342,43 @@ $(document).ready(function(){
 			search_active = 0;
 			result_active = 1;
 		}
+	});
+	
+	//Button click
+	$("#login_button").mousedown(function() {
+		alert("Code for login is coming!");
+	});
+	$("#register_button").mousedown(function() {
+		alert("Code for register is coming!");
+	});
+	$("#search_button").mouseup(function() {
+		zipcode_textField = document.getElementById("zipcode_textField");
+		zipcode = zipcode_textField.value;
+		if (zipcode == "Empty is valid") {
+			zipcode = "";
+		}
+		else if (!valid_zipCode(zipcode) && (zipcode != "")) {
+			alert("Error: Zip Code should be 5 digits.");
+			return;
+		}
+		
+		mileradius_textField = document.getElementById("mileradius_textField");
+		mileradius = mileradius_textField.value;
+		if (mileradius == "Empty is valid") {
+			mileradius = "";
+		}
+		else if (!valid_mileRadius(mileradius) && (mileradius != "")) {
+			alert("Error: Mile Radius should an integer.");
+			return;
+		}
+		
+		form = document.getElementById("search_form");
+		form.action = "shopping/SearchServlet";
+		form.method = "get";
+		form.submit();
+	});
+	$("#choose_button").mousedown(function() {
+		alert("Code for choose is coming!");
 	});
 });
 </script>

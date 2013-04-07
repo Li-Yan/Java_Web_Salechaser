@@ -14,7 +14,7 @@ function valid_zipCode(ZipCode) {
 }
 
 function valid_mileRadius(MileRadius) {
-	var s = "" + ZipCode;
+	var s = "" + MileRadius;
 	length = s.length;
 	for (var i = 0; i < length; i++) {
 		var ch = s.charAt(i);
