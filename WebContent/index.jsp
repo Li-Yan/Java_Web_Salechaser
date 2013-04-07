@@ -1,12 +1,17 @@
-<%@ page contentType="text/html; charset=UTF-8" language="java" import="java.sql.*" errorPage="" %>
+<%@page import="org.apache.jasper.tagplugins.jstl.core.ForEach"%>
+<%@page import="shopping.SaleStore" %>
+<%@page import="shopping.SharedMemory" %>
+<%@page import="shopping.SearchServlet" %>
+<%@page contentType="text/html; charset=UTF-8" language="java" import="java.sql.*" errorPage="" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>Shopping</title>
+<title>ShoppingHunter</title>
 <script src="./plugin/jquery-1.9.1.min.js"></script>
 <link rel="Stylesheet" type="text/css" href="./plugin/wTooltip.css" />
 <script type="text/javascript" src="./plugin/wTooltip.js"></script>
+<script type="text/javascript" src="./tool.js"></script>
 <style type="text/css">
 body {
 	background-image: url(images/main_back.jpg);
@@ -21,6 +26,12 @@ body {
 	border: solid #CACACA 1px;
 	cursor: pointer;
 	}
+.display_subpage {
+	opacity: 0.78;
+	background-image: url(images/subpage_back.jpg);
+	background-repeat: no-repeat;
+	background-position: center;
+}
 .non_display_subpage {
 	display: none;
 	opacity: 0.78;
@@ -81,7 +92,6 @@ body {
 <img src="images/logo_title.png" alt="logo" width="237" height="100" class="logo" /> 
 <div align="right">
 <img src="images/transparent.png" width="10" height="8" alt="transparent" /><br />
-<img src="images/transparent.png" width="500" height="10" alt="transparent" />
 <!-- Buttons for multiple jobs -->
 <img id="login_image" src="images/login.png" width="30" height="30" alt="login icon" />
 <img src="images/transparent.png" width="15" height="10" alt="transparent" />
@@ -92,6 +102,11 @@ body {
 </div>
 <br />
 
+<script language="javascript">
+var login_active = 0;
+var search_active = 0;
+var result_active = 0;
+</script>
 <!-- subpage for login -->
 <div id="subpage_login" align="center" class="non_display_subpage">
 <img src="images/separator.png" width="800" height="10" alt="separator" /><br />
@@ -101,13 +116,13 @@ body {
 <img src="images/user.png" width="15" height="15" alt="user" />&nbsp;&nbsp;
 <font class="normal_font">User:</font>
 <img src="images/transparent.png" width="34" height="10" alt="transperant" />
-<input name="user_textField" class="input_font" type="text" size="19" /><br />
+<input name="user_textField" class="input_font" type="text" size="19" onclick="this.select();"/><br />
 <img src="images/transparent.png" width="5" height="3" alt="transperant" /><br />
 
 <img src="images/password.png" width="15" height="15" alt="password" />&nbsp;&nbsp;
 <font class="normal_font">Password:</font>
 <img src="images/transparent.png" width="5" height="10" alt="transperant" />
-<input name="password_textField" class="input_font" type="password" size="19" /><br />
+<input name="password_textField" class="input_font" type="password" size="19" onclick="this.select();"/><br />
 <img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
 
 <script language="javascript">
@@ -139,38 +154,63 @@ function register() {
 <img src="images/zipcode.png" width="15" height="15" alt="zipcode" />&nbsp;&nbsp;
 <font class="normal_font">Zip Code:</font>
 <img src="images/transparent.png" width="34" height="10" alt="transperant" />
-<input name="zipcode_textField" class="input_font" type="text" size="19" value="Empty is valid"/><br />
+<input id="zipcode_textField" name="zipcode_textField" class="input_font" type="text" size="19" value="Empty is valid" onclick="this.select();"/><br />
 <img src="images/transparent.png" width="5" height="3" alt="transperant" /><br />
 
 <img src="images/mileradius.png" width="15" height="15" alt="mileradius" />&nbsp;&nbsp;
 <font class="normal_font">Mile Radius:</font>
 <img src="images/transparent.png" width="15" height="10" alt="transperant" />
-<input name="mileradius_textField" class="input_font" type="text" size="19" value="Empty is valid"/><br />
+<input id="mileradius_textField" name="mileradius_textField" class="input_font" type="text" size="19" value="Empty is valid" onclick="this.select();"/><br />
 <img src="images/transparent.png" width="5" height="3" alt="transperant" /><br />
 
-<img src="images/category.png" width="15" height="15" alt="mileradius" />&nbsp;&nbsp;
+<img src="images/category.png" width="15" height="15" alt="category" />&nbsp;&nbsp;
 <font class="normal_font">Category:</font>
 <img src="images/transparent.png" width="34" height="10" alt="transperant" />
-<select name="category_select" class="input_font" >
+<select id="category_select" name="category_select" class="input_font" >
 <option value="any">- Any -&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
-<option value="restaurants">Restaurants</option>
-<option value="entertainment">Entertainment</option>
-<option value="beauty & spa">Beauty & Spa</option>
-<option value="services">Services</option>
-<option value="shopping">Shopping</option>
+<option value="Restaurants">Restaurants</option>
+<option value="Entertainment">Entertainment</option>
+<option value="Beauty & Spa">Beauty & Spa</option>
+<option value="Services">Services</option>
+<option value="Shopping">Shopping</option>
+<option value="Travel">Travel</option>
 </select><br />
 <img src="images/transparent.png" width="5" height="3" alt="transperant" /><br />
 
 <img src="images/keyword.png" width="15" height="15" alt="keyword" />&nbsp;&nbsp;
 <font class="normal_font">Keyword:</font>
 <img src="images/transparent.png" width="34" height="10" alt="transperant" />
-<input name="keyword_textField" class="input_font" type="text" size="19" value="Empty is valid"/><br />
+<input id="keyword_textField" name="keyword_textField" class="input_font" type="text" size="19" value="Empty is valid" onclick="this.select();"/><br />
 <img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
 
 <script language="javascript">
 //Add function for "search" button
 function search() {
-	alert("Code for search is coming!");
+	
+	zipcode_textField = document.getElementById("zipcode_textField");
+	zipcode = zipcode_textField.value;
+	if (zipcode == "Empty is valid") {
+		zipcode = "";
+	}
+	else if (!valid_zipCode(zipcode)) {
+		alert("Error: Zip Code should be 5 digits.");
+		return;
+	}
+	
+	mileradius_textField = document.getElementById("mileradius_textField");
+	mileradius = mileradius_textField.value;
+	if (mileradius == "Empty is valid") {
+		mileradius = "";
+	}
+	else if (!valid_mileRadius(mileradius)) {
+		alert("Error: Mile Radius should an integer.");
+		return;
+	}
+	
+	form = document.getElementById("search_form");
+	form.action = "shopping/SearchServlet";
+	form.method = "get";
+	form.submit();
 }
 </script>
 <button id="search_button" class="normal_button" onclick="search()">Search</button><br />
@@ -182,15 +222,27 @@ function search() {
 
 <!-- subpage for result -->
 <div id="subpage_result" align="center" class="non_display_subpage">
+<% if (SharedMemory.show_result) { %>
+<script language="javascript">
+$("#subpage_result").slideToggle(700);
+document.getElementById("result_image").src = "images/result_active.png";
+result_active = 1;
+</script>
+<% 	SharedMemory.show_result = false; 
+} %>
 <img src="images/separator.png" width="800" height="10" alt="separator" /><br />
 <label class="title_label">Result</label><br />
 <img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
 
 <font class="normal_font">Select Stores (multiple choices):</font><br />
 <img src="images/transparent.png" width="5" height="3" alt="transperant" /><br />
+<form>
 <select id="store_select" name="store_select" size="13" multiple="multiple" class="input_font" style="width:500px">
-<option value="">To be continue;</option>
-<option value="">To be continue;</option>
+<% for (SaleStore store : SharedMemory.stores) { 
+	String s = store.name + ": " + store.dealTitle;
+%>
+	<option value="<%out.print(store.ID);%>"><%out.print(s);%></option>
+<%} %>
 </select><br />
 <img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
 
@@ -236,10 +288,6 @@ $("#result_image").wTooltip({
 
 <!-- jQuery -->
 <script type="text/javascript">
-var image_id = "";
-var login_active = 0;
-var search_active = 0;
-var result_active = 0;
 $(document).ready(function(){
 	//login_image
 	$("#login_image").click(function() {
