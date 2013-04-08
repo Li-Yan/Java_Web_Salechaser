@@ -11,6 +11,24 @@
 <link rel="Stylesheet" type="text/css" href="./plugin/wTooltip.css" />
 <script type="text/javascript" src="./plugin/wTooltip.js"></script>
 <script type="text/javascript" src="./tool.js"></script>
+
+<!-- Google Maps API v3 -->
+<script type="text/javascript"
+src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-8-qkY0t5gIYFUS3N0OIJHbXMRDT3jNw&sensor=true">
+</script>
+<script type="text/javascript">
+	function map_initialize() {
+		var mapOptions = {
+			center : new google.maps.LatLng(40.806858, -73.961163),
+			zoom : 13,
+			mapTypeId : google.maps.MapTypeId.ROADMAP
+		};
+		var map = new google.maps.Map(document.getElementById("map_canvas"),
+				mapOptions);
+	}
+</script>
+<!-- End: Google Maps API v3 -->
+
 <style type="text/css">
 body {
 	background-image: url(images/main_back.jpg);
@@ -90,7 +108,7 @@ body {
 </style>
 </head>
 
-<body>
+<body onload="map_initialize()">
 <img src="images/logo_title.png" alt="logo" width="237" height="100" class="logo" /> 
 <div align="right">
 <img src="images/transparent.png" width="10" height="8" alt="transparent" /><br />
@@ -229,8 +247,9 @@ for (SaleStore store : SharedMemory.stores) {
 </div>
 <!-- End: subpage for result -->
 
-<div align="center">
-<iframe class="map" src="https://maps.google.com/?ie=UTF8&amp;ll=40.806858,-73.961163&amp;spn=0.035342,0.061111&amp;t=m&amp;z=14&amp;output=embed"></iframe><br />
+<div id="map_canvas" class="map" align="center">
+<!-- <iframe class="map" src="https://maps.google.com/?ie=UTF8&amp;ll=40.806858,-73.961163&amp;spn=0.035342,0.061111&amp;t=m&amp;z=14&amp;output=embed"></iframe><br />
+-->
 </div>
 
 <!-- Mouse over notification -->
