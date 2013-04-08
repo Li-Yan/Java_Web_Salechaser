@@ -17,14 +17,34 @@
 src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-8-qkY0t5gIYFUS3N0OIJHbXMRDT3jNw&sensor=true">
 </script>
 <script type="text/javascript">
+	var location_columbia = new google.maps.LatLng(40.806858, -73.961163);
+	var maker;
+	var map;
+	
 	function map_initialize() {
 		var mapOptions = {
-			center : new google.maps.LatLng(40.806858, -73.961163),
+			center : location_columbia,
 			zoom : 13,
 			mapTypeId : google.maps.MapTypeId.ROADMAP
 		};
-		var map = new google.maps.Map(document.getElementById("map_canvas"),
+		map = new google.maps.Map(document.getElementById("map_canvas"),
 				mapOptions);
+		marker = new google.maps.Marker({
+		    map:map,
+		    draggable:true,
+		    animation: google.maps.Animation.DROP,
+		    position: location_columbia
+		  });
+	}
+	
+	function store_maker(latitude, longitude) {
+		var location = new google.maps.LatLng(latitude, longitude);
+		marker = new google.maps.Marker({
+		    map:map,
+		    draggable:true,
+		    animation: google.maps.Animation.DROP,
+		    position: location
+		  });
 	}
 </script>
 <!-- End: Google Maps API v3 -->
@@ -218,26 +238,27 @@ result_active = 1;
 <font class="normal_font">Select Stores</font><br />
 <img src="images/transparent.png" width="5" height="3" alt="transperant" /><br />
 
-<form>
+<form id="result_form">
+<input name="parameter" type="hidden" />
 <% int count = 0;
 for (SaleStore store : SharedMemory.stores) { 
-	if ((count++) == 10) break;
 	String s = store.dealTitle;
 	int l = s.length();
 	int Max_Length = 70;
 	if (l > Max_Length) s = s.substring(0, Max_Length);
 %>
 	<div class="result_checkbox">
-	<input type="checkbox" value="<%out.print(store.ID); %>">
+	<input type="checkbox" name="<%out.print(count); %>">
     <img src="<%out.print(store.showImage); %>" width="27" height="27" />
     <font class="normal_font">&nbsp;<%out.print(store.name); %>: </font>
-    <font class="result_title_font"><%out.print(s); %></font><br />
+    <a href="<%out.print(store.URL); %>" class="result_title_font"><%out.print(s); %></a><br />
     </input>
     </div><br />
     <img src="images/transparent.png" width="5" height="10" alt="transperant" /><br />
-<%} %>
+<%
+	if ((++count) == SharedMemory.max_list) break;
+} %>
 <br />
-
 
 <button id="choose_button" class="normal_button" >Choose</button>
 </form>
@@ -247,10 +268,21 @@ for (SaleStore store : SharedMemory.stores) {
 </div>
 <!-- End: subpage for result -->
 
-<div id="map_canvas" class="map" align="center">
-<!-- <iframe class="map" src="https://maps.google.com/?ie=UTF8&amp;ll=40.806858,-73.961163&amp;spn=0.035342,0.061111&amp;t=m&amp;z=14&amp;output=embed"></iframe><br />
--->
-</div>
+<!-- map operation -->
+<div id="map_canvas" class="map" align="center" />
+<!-- 
+<%for (int index : SharedMemory.checked_stores) { 
+	SaleStore store	= SharedMemory.stores.get(index);
+%>
+<script language="javascript">
+	latitude = "<%=store.latitude %>";
+	longitude = "<%=store.longitude %>";
+	store_maker(latitude, longitude);
+</script>
+<%} %>
+ -->
+<!-- End: map operation -->
+
 
 <!-- Mouse over notification -->
 <script type="text/javascript">
@@ -393,7 +425,10 @@ $(document).ready(function(){
 		form.submit();
 	});
 	$("#choose_button").mousedown(function() {
-		alert("Code for choose is coming!");
+		form = document.getElementById("result_form");
+		form.action = "salechaser/ChooseServlet";
+		form.method = "post";
+		form.submit();
 	});
 });
 </script>

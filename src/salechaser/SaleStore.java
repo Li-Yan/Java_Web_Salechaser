@@ -10,6 +10,7 @@ public class SaleStore {
 	public String expirationDate;
 	public String dealTitle;
 	public String dealinfo;
+	public String URL;
 	public double latitude;
 	public double longitude;
 	
@@ -22,6 +23,7 @@ public class SaleStore {
 		if ((s = object.getString("expirationDate")) != null) this.expirationDate = s;
 		if ((s = object.getString("dealTitle")) != null) this.dealTitle = s;
 		if ((s = object.getString("dealinfo")) != null) this.dealinfo = s;
+		if ((s = object.getString("URL")) != null) this.URL = s;
 		if ((s = object.getString("lat")) != null) this.latitude = Double.parseDouble(s);
 		if ((s = object.getString("lon")) != null) this.longitude = Double.parseDouble(s);
 	}

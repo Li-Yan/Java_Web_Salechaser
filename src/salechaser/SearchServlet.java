@@ -89,6 +89,7 @@ public class SearchServlet extends HttpServlet {
 				parameter.put("search", keyword);
 			}
 		}
+		parameter.put("limit", String.valueOf(SharedMemory.max_list));
 		
 		String result = saleSearch(parameter);
 		parseResult(result);

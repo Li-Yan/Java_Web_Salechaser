@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class SharedMemory {
+	public static final int max_list = 10;
+	
 	public static boolean show_result = false;
 	
 	public static final HashMap<String, String> categoryID = new HashMap<String, String>() {
@@ -17,5 +19,6 @@ public class SharedMemory {
 		put("Travel", "7");
 	}};
 	
+	public static ArrayList<Integer> checked_stores = new ArrayList<Integer>();
 	public static ArrayList<SaleStore> stores = new ArrayList<SaleStore>();
 }
