@@ -14,37 +14,39 @@
 
 <!-- Google Maps API v3 -->
 <script type="text/javascript"
-src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-8-qkY0t5gIYFUS3N0OIJHbXMRDT3jNw&sensor=true">
+src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-8-qkY0t5gIYFUS3N0OIJHbXMRDT3jNw&sensor=false">
 </script>
 <script type="text/javascript">
-	var location_columbia = new google.maps.LatLng(40.806858, -73.961163);
-	var maker;
+	var location_default = new google.maps.LatLng(40.75818,-73.957043);
 	var map;
+	var markers = [];
+	var locations = [];
 	
 	function map_initialize() {
 		var mapOptions = {
-			center : location_columbia,
-			zoom : 13,
+			center : location_default,
+			zoom : 12,
 			mapTypeId : google.maps.MapTypeId.ROADMAP
 		};
 		map = new google.maps.Map(document.getElementById("map_canvas"),
 				mapOptions);
-		marker = new google.maps.Marker({
-		    map:map,
-		    draggable:true,
-		    animation: google.maps.Animation.DROP,
-		    position: location_columbia
-		  });
+		
+		for (var i = 0; i < locations.length; i++) {
+			addMarker(locations[i]);
+		}
 	}
 	
-	function store_maker(latitude, longitude) {
-		var location = new google.maps.LatLng(latitude, longitude);
-		marker = new google.maps.Marker({
-		    map:map,
-		    draggable:true,
-		    animation: google.maps.Animation.DROP,
-		    position: location
-		  });
+	function addLocation(latitude, longitude) {
+		locations.push(new google.maps.LatLng(latitude, longitude));
+	}
+	
+	function addMarker(location) {
+		markers.push(new google.maps.Marker({
+			position: location,
+			map: map,
+			draggable: false,
+			animation: google.maps.Animation.DROP
+		}));
 	}
 </script>
 <!-- End: Google Maps API v3 -->
@@ -269,18 +271,16 @@ for (SaleStore store : SharedMemory.stores) {
 <!-- End: subpage for result -->
 
 <!-- map operation -->
-<div id="map_canvas" class="map" align="center" />
-<!-- 
 <%for (int index : SharedMemory.checked_stores) { 
 	SaleStore store	= SharedMemory.stores.get(index);
 %>
 <script language="javascript">
 	latitude = "<%=store.latitude %>";
 	longitude = "<%=store.longitude %>";
-	store_maker(latitude, longitude);
+	addLocation(latitude, longitude);
 </script>
 <%} %>
- -->
+<div id="map_canvas" class="map" align="center" />
 <!-- End: map operation -->
 
 
