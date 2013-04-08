@@ -1,4 +1,4 @@
-package shopping;
+package salechaser;
 
 import java.util.ArrayList;
 import java.util.HashMap;

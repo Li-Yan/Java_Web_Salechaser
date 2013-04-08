@@ -1,4 +1,4 @@
-package shopping;
+package salechaser;
 
 import org.json.JSONObject;
 

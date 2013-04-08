@@ -1,12 +1,12 @@
-<%@page import="shopping.SaleStore" %>
-<%@page import="shopping.SharedMemory" %>
-<%@page import="shopping.SearchServlet" %>
+<%@page import="salechaser.SaleStore" %>
+<%@page import="salechaser.SharedMemory" %>
+<%@page import="salechaser.SearchServlet" %>
 <%@page contentType="text/html; charset=UTF-8" language="java" import="java.sql.*" errorPage="" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>ShoppingHunter</title>
+<title>Salechaser</title>
 <script src="./plugin/jquery-1.9.1.min.js"></script>
 <link rel="Stylesheet" type="text/css" href="./plugin/wTooltip.css" />
 <script type="text/javascript" src="./plugin/wTooltip.js"></script>
@@ -109,7 +109,7 @@ body {
 </head>
 
 <body onload="map_initialize()">
-<img src="images/logo_title.png" alt="logo" width="237" height="100" class="logo" /> 
+<img src="images/logo.png" alt="logo" width="245" height="88" class="logo" /> 
 <div align="right">
 <img src="images/transparent.png" width="10" height="8" alt="transparent" /><br />
 <!-- Buttons for multiple jobs -->
@@ -388,7 +388,7 @@ $(document).ready(function(){
 		}
 		
 		form = document.getElementById("search_form");
-		form.action = "shopping/SearchServlet";
+		form.action = "salechaser/SearchServlet";
 		form.method = "get";
 		form.submit();
 	});

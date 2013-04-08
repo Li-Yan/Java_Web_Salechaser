@@ -1,4 +1,4 @@
-package shopping;
+package salechaser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
