@@ -22,7 +22,7 @@ import org.json.JSONObject;
 public class SearchServlet extends HttpServlet {
 	/*
 	 * return URL format:
-	 * 	index.jsp?show_result=1&stores=name@,@dealTitle@,@URL@,@showImag@,@geocodee@;@...
+	 * 	index.jsp?show_result=1&stores=name@,@dealTitle@,@URL@,@showImag@,@geocodee@,@expirationDate@,@address@,@phone@;@...
 	 */
 
 	private static final long serialVersionUID = -260652636708185564L;
@@ -109,7 +109,8 @@ public class SearchServlet extends HttpServlet {
 				else urlString = urlString + "@;@";		//using "@!@" to separate different stores
 				urlString = urlString + saleStore.name + "@,@" + saleStore.dealTitle + "@,@" + 
 						saleStore.URL + "@,@" + saleStore.showImage + "@,@" + 
-						String.valueOf(saleStore.latitude) + "," + String.valueOf(saleStore.longitude);
+						String.valueOf(saleStore.latitude) + "," + String.valueOf(saleStore.longitude) +
+						"@,@" + saleStore.expirationDate + "@,@" + saleStore.address + "@,@" + saleStore.phone;
 			}
 		}
 		
