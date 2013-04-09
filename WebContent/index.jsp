@@ -281,7 +281,7 @@ for (var i = 0; i < stores.length; i++) {
 	document.write("<input id='result_checkbox" + i +"' type='checkbox' name='" + i + "'>");
 	document.write("<img src='" + store_detail[3] + "' width='27' height='27' />");
 	document.write("<font class='normal_font'>&nbsp;" + unescape(store_detail[0]) + ": </font>");
-	document.write("<a href='" + store_detail[2] + "' class='result_title_font'>" + unescape(store_detail[1]) + "</a><br />");
+	document.write("<a class='result_title_font' href='#' onClick=\"window.open(\'" + store_detail[2] + "\')\">" + unescape(store_detail[1]) + "</a><br />");
 	document.write("</input>");
 	document.write("</div><br />");
 	document.write("<img src='images/transparent.png' width='5' height='10' alt='transperant' /><br />");

@@ -52,7 +52,7 @@ function marker_htmlMaker(store_detail) {
 	htmlString = htmlString + "<img src='" + store_detail[3] + "' width='64' height='64' /><br />";
 	htmlString = htmlString + "<a class='normal_font'>Store Name</a><br />";
 	htmlString = htmlString + "<a class='result_title_font'>" + unescape(store_detail[0]) + "</a><br />";
-	htmlString = htmlString + "<a class='normal_font' href='" + store_detail[2] + "' class='result_title_font'>Sale Title & Link</a><br />";
+	htmlString = htmlString + "<a class='normal_font' href='#' onClick=\"window.open(\'" + store_detail[2] + "\')\">Sale Title & Link</a><br />";
 	htmlString = htmlString + "<a class='result_title_font'>" + unescape(store_detail[1]) + "</a><br />";
 	htmlString = htmlString + "<a class='normal_font'>Expire Date</a><br />";
 	htmlString = htmlString + "<a class='result_title_font'>" + unescape(store_detail[5]) + "</a><br />";
