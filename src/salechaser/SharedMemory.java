@@ -1,12 +1,9 @@
 package salechaser;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class SharedMemory {
 	public static final int max_list = 10;
-	
-	public static boolean show_result = false;
 	
 	public static final HashMap<String, String> categoryID = new HashMap<String, String>() {
 		private static final long serialVersionUID = 3131766601636547206L;
@@ -18,7 +15,4 @@ public class SharedMemory {
 		put("Shopping", "6");
 		put("Travel", "7");
 	}};
-	
-	public static ArrayList<Integer> checked_stores = new ArrayList<Integer>();
-	public static ArrayList<SaleStore> stores = new ArrayList<SaleStore>();
 }

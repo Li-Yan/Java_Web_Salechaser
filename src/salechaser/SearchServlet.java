@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -19,6 +20,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class SearchServlet extends HttpServlet {
+	/*
+	 * return URL format:
+	 * 	index.jsp?show_result=1&stores=name@,@dealTitle@,@URL@,@showImag@,@geocodee@;@...
+	 */
 
 	private static final long serialVersionUID = -260652636708185564L;
 	private static final String api_8coupons_key = "d53d442c6196098bbf1455fec0df04c608077cb55278b4238781ded759b9dea7f2453f1ee46bb3090eb441c080a1b093";
@@ -55,12 +60,13 @@ public class SearchServlet extends HttpServlet {
 		return response;
 	}
 	
-	private void parseResult(String jsonString) {
+	private ArrayList<SaleStore> parseResult(String jsonString) {
 		JSONArray jsonArray = new JSONArray(jsonString);
-		SharedMemory.stores.clear();
+		ArrayList<SaleStore> stores = new ArrayList<SaleStore>();
 		for (int i = 0; i < jsonArray.length(); i++) {
-			SharedMemory.stores.add(new SaleStore((JSONObject) jsonArray.get(i)));
+			stores.add(new SaleStore((JSONObject) jsonArray.get(i)));
 		}
+		return stores;
 	}
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -92,9 +98,21 @@ public class SearchServlet extends HttpServlet {
 		parameter.put("limit", String.valueOf(SharedMemory.max_list));
 		
 		String result = saleSearch(parameter);
-		parseResult(result);
+		ArrayList<SaleStore> stores = parseResult(result);
 		
-		SharedMemory.show_result = true;
-		response.sendRedirect("../index.jsp");
+		String urlString = "../index.jsp?show_result=1";
+		if (stores.size() > 0) {
+			urlString = urlString + "&stores=";
+			int m = 0;
+			for (SaleStore saleStore : stores) {
+				if (m == 0) m = 1;
+				else urlString = urlString + "@;@";		//using "@!@" to separate different stores
+				urlString = urlString + saleStore.name + "@,@" + saleStore.dealTitle + "@,@" + 
+						saleStore.URL + "@,@" + saleStore.showImage + "@,@" + 
+						String.valueOf(saleStore.latitude) + "," + String.valueOf(saleStore.longitude);
+			}
+		}
+		
+		response.sendRedirect(urlString);
 	}
 }

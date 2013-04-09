@@ -1,5 +1,3 @@
-<%@page import="salechaser.SaleStore" %>
-<%@page import="salechaser.SharedMemory" %>
 <%@page import="salechaser.SearchServlet" %>
 <%@page contentType="text/html; charset=UTF-8" language="java" import="java.sql.*" errorPage="" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -12,6 +10,11 @@
 <script type="text/javascript" src="./plugin/wTooltip.js"></script>
 <script type="text/javascript" src="./tool.js"></script>
 
+<!-- url initialization -->
+<script language="javascript">
+url_Parameters(location.search);
+</script>
+
 <!-- Google Maps API v3 -->
 <script type="text/javascript"
 src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-8-qkY0t5gIYFUS3N0OIJHbXMRDT3jNw&sensor=false">
@@ -20,7 +23,6 @@ src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-8-qkY0t5gIYFUS3N0OIJHbXM
 	var location_default = new google.maps.LatLng(40.75818,-73.957043);
 	var map;
 	var markers = [];
-	var locations = [];
 	
 	function map_initialize() {
 		var mapOptions = {
@@ -31,16 +33,17 @@ src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-8-qkY0t5gIYFUS3N0OIJHbXM
 		map = new google.maps.Map(document.getElementById("map_canvas"),
 				mapOptions);
 		
-		for (var i = 0; i < locations.length; i++) {
-			addMarker(locations[i]);
+		for (var i = 0; i < checked.length; i++) {
+			if (checked[i] == "1") {
+				var store_detail = stores[i].split("@,@");
+				var geocode = store_detail[4].split(',');
+				addMarker(geocode[0] * 1, geocode[1] * 1);
+			}
 		}
 	}
 	
-	function addLocation(latitude, longitude) {
-		locations.push(new google.maps.LatLng(latitude, longitude));
-	}
-	
-	function addMarker(location) {
+	function addMarker(latitude, longitude) {
+		var location = new google.maps.LatLng(latitude, longitude);
 		markers.push(new google.maps.Marker({
 			position: location,
 			map: map,
@@ -131,6 +134,7 @@ body {
 </head>
 
 <body onload="map_initialize()">
+
 <img src="images/logo.png" alt="logo" width="245" height="88" class="logo" /> 
 <div align="right">
 <img src="images/transparent.png" width="10" height="8" alt="transparent" /><br />
@@ -225,14 +229,14 @@ var result_active = 0;
 
 <!-- subpage for result -->
 <div id="subpage_result" align="center" class="non_display_subpage">
-<% if (SharedMemory.show_result) { %>
 <script language="javascript">
-$("#subpage_result").slideToggle(700);
-document.getElementById("result_image").src = "images/result_active.png";
-result_active = 1;
+if (show_result) {
+	$("#subpage_result").slideToggle(700);
+	document.getElementById("result_image").src = "images/result_active.png";
+	result_active = 1;
+	show_result = false;
+}
 </script>
-<% 	SharedMemory.show_result = false; 
-} %>
 <img src="images/separator.png" width="800" height="10" alt="separator" /><br />
 <label class="title_label">Result</label><br />
 <img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
@@ -242,24 +246,20 @@ result_active = 1;
 
 <form id="result_form">
 <input name="parameter" type="hidden" />
-<% int count = 0;
-for (SaleStore store : SharedMemory.stores) { 
-	String s = store.dealTitle;
-	int l = s.length();
-	int Max_Length = 70;
-	if (l > Max_Length) s = s.substring(0, Max_Length);
-%>
-	<div class="result_checkbox">
-	<input type="checkbox" name="<%out.print(count); %>">
-    <img src="<%out.print(store.showImage); %>" width="27" height="27" />
-    <font class="normal_font">&nbsp;<%out.print(store.name); %>: </font>
-    <a href="<%out.print(store.URL); %>" class="result_title_font"><%out.print(s); %></a><br />
-    </input>
-    </div><br />
-    <img src="images/transparent.png" width="5" height="10" alt="transperant" /><br />
-<%
-	if ((++count) == SharedMemory.max_list) break;
-} %>
+<script language="javascript">
+for (var i = 0; i < stores.length; i++) {
+	var store_detail = stores[i].split("@,@");
+	document.write("<div class='result_checkbox'>");
+	document.write("<input id='result_checkbox" + i +"' type='checkbox' name='" + i + "'>");
+	document.write("<img src='" + store_detail[3] + "' width='27' height='27' />");
+	document.write("<font class='normal_font'>&nbsp;" + unescape(store_detail[0]) + ": </font>");
+	document.write("<a href='" + store_detail[2] + "' class='result_title_font'>" + unescape(store_detail[1]) + "</a><br />");
+	document.write("</input>");
+	document.write("</div><br />");
+	document.write("<img src='images/transparent.png' width='5' height='10' alt='transperant' /><br />");
+}
+</script>
+
 <br />
 
 <button id="choose_button" class="normal_button" >Choose</button>
@@ -271,15 +271,6 @@ for (SaleStore store : SharedMemory.stores) {
 <!-- End: subpage for result -->
 
 <!-- map operation -->
-<%for (int index : SharedMemory.checked_stores) { 
-	SaleStore store	= SharedMemory.stores.get(index);
-%>
-<script language="javascript">
-	latitude = "<%=store.latitude %>";
-	longitude = "<%=store.longitude %>";
-	addLocation(latitude, longitude);
-</script>
-<%} %>
 <div id="map_canvas" class="map" align="center" />
 <!-- End: map operation -->
 
@@ -418,17 +409,33 @@ $(document).ready(function(){
 			alert("Error: Mile Radius should an integer.");
 			return;
 		}
-		
 		form = document.getElementById("search_form");
 		form.action = "salechaser/SearchServlet";
 		form.method = "get";
 		form.submit();
 	});
 	$("#choose_button").mousedown(function() {
-		form = document.getElementById("result_form");
-		form.action = "salechaser/ChooseServlet";
-		form.method = "post";
-		form.submit();
+		var checked = false;
+		var checkedString = "";
+		for (var i = 0; i < stores.length; i++) {
+			checkbox = document.getElementById("result_checkbox" + i);
+			if (checkbox.checked) {
+				checkedString = checkedString + "1";
+				checked = true;
+			}
+			else {
+				checkedString = checkedString + "0";
+			}
+		}
+		if (!checked) {
+			alert("Error: no store checked!");
+			return;
+		}
+		var url = window.location.href;
+		var header = url.substr(0, url.indexOf('?'));
+		url = url.substr(url.indexOf("show_result=") + 13);
+		url = "?show_result=0" + "&checked=" + checkedString + url;
+		window.location = header + url;
 	});
 });
 </script>
