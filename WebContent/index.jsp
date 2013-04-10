@@ -23,6 +23,9 @@ src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-8-qkY0t5gIYFUS3N0OIJHbXM
 	var location_default = new google.maps.LatLng(40.75818,-73.957043);
 	var map;
 	var markers = [];
+	var user_marker = null;
+	var user_location;
+	var user_marker_locker = false;
 	var infowindow = new google.maps.InfoWindow({maxWidth: 800});
 	
 	function map_initialize() {
@@ -33,6 +36,31 @@ src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-8-qkY0t5gIYFUS3N0OIJHbXM
 		};
 		map = new google.maps.Map(document.getElementById("map_canvas"),
 				mapOptions);
+		
+		google.maps.event.addListener(map, 'click', function(event) {
+			if (!user_marker_locker) {
+				user_location = event.latLng;
+				if (user_marker != null) user_marker.setMap(null);
+				user_marker = new google.maps.Marker({
+					position: user_location,
+					map: map,
+					icon : 'images/me.png',
+					draggable: false,
+					animation: google.maps.Animation.DROP
+				});
+				google.maps.event.addListener(user_marker, 'dblclick', function() {
+					if (!user_marker_locker) {
+						this.setIcon('images/me_lock.png');
+						user_marker_locker = true;
+					}
+					else {
+						this.setIcon('images/me.png');
+						user_marker_locker = false;	
+					}
+				});
+				map.setCenter(user_location);
+			}
+		  });
 		
 		for (var i = 0; i < checked.length; i++) {
 			if (checked[i] == "1") {
@@ -273,7 +301,7 @@ if (show_result) {
 <img src="images/transparent.png" width="5" height="3" alt="transperant" /><br />
 
 <form id="result_form">
-<input name="parameter" type="hidden" />
+<input id="result_parameter" name="result_parameter" type="hidden" />
 <script language="javascript">
 for (var i = 0; i < stores.length; i++) {
 	var store_detail = stores[i].split("@,@");
@@ -459,11 +487,16 @@ $(document).ready(function(){
 			alert("Error: no store checked!");
 			return;
 		}
-		var url = window.location.href;
-		var header = url.substr(0, url.indexOf('?'));
-		url = url.substr(url.indexOf("show_result=") + 13);
-		url = "?show_result=0" + "&checked=" + checkedString + url;
-		window.location = header + url;
+		var choose_url = window.location.href;
+		var choose_header = choose_url.substr(0, choose_url.indexOf('?'));
+		choose_url = choose_url.substr(choose_url.indexOf("show_result=") + 13);
+		var new_url = choose_header + "?show_result=0" + "&checked=" + checkedString + choose_url;
+		
+		document.getElementById("result_parameter").value = new_url;
+		form = document.getElementById("result_form");
+		form.action = "salechaser/ChooseServlet";
+		form.method = "post";
+		form.submit();
 	});
 });
 </script>
