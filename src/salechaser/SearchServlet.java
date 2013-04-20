@@ -101,12 +101,9 @@ public class SearchServlet extends HttpServlet {
 		}
 		parameter.put("limit", String.valueOf(SharedMemory.max_list));
 		
-		String urlString = request.getParameter("search_parameter");
-		if (urlString.indexOf("index.jsp") < 0) {
-			urlString = urlString + "index.jsp";
-		}
 		String result = saleSearch(parameter);
 		ArrayList<SaleStore> stores = parseResult(result);
+		
 		request.setAttribute("show_result", 1);
 		request.setAttribute("stores", stores);
 		

@@ -12,11 +12,6 @@
 <script type="text/javascript" src="./plugin/wTooltip.js"></script>
 <script type="text/javascript" src="./tool.js"></script>
 
-<!-- url initialization -->
-<script language="javascript">
-//url_Parameters(location.search);
-</script>
-
 <!-- Google Maps API v3 -->
 <script type="text/javascript"
 src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-8-qkY0t5gIYFUS3N0OIJHbXMRDT3jNw&sensor=false">
@@ -64,13 +59,7 @@ src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-8-qkY0t5gIYFUS3N0OIJHbXM
 			}
 		  });
 		
-// 		for (var i = 0; i < checked.length; i++) {
-// 			if (checked[i] == "1") {
-// 				var store_detail = stores[i].split("@,@");
-// 				var geocode = store_detail[4].split(',');
-// 				addMarker(geocode[0] * 1, geocode[1] * 1, store_detail);
-// 			}
-// 		}
+		alert(checkStrings);
 	}
 	
 	function addMarker(latitude, longitude, store_detail) {
@@ -80,7 +69,7 @@ src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-8-qkY0t5gIYFUS3N0OIJHbXM
 			position: location,
 			map: map,
 			icon : 'images/marker.png',
-			html : marker_htmlMaker(store_detail),
+			//html : marker_htmlMaker(store_detail),
 			draggable: false,
 			animation: google.maps.Animation.DROP
 		});
@@ -107,6 +96,8 @@ src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-8-qkY0t5gIYFUS3N0OIJHbXM
 			infowindow.open(map, this);
 		});
 	}
+	
+	google.maps.event.addDomListener(window, 'load', map_initialize);
 </script>
 <!-- End: Google Maps API v3 -->
 
@@ -191,7 +182,7 @@ body {
 </style>
 </head>
 
-<body onload="map_initialize()">
+<body>
 
 <img src="images/logo.png" alt="logo" width="245" height="88" class="logo" /> 
 <div align="right">
@@ -289,12 +280,12 @@ var result_active = 0;
 <!-- subpage for result -->
 <div id="subpage_result" align="center" class="non_display_subpage">
 <% if (request.getAttribute("show_result") != null) {
+	request.removeAttribute("show_result");
 %>
 	<script language="javascript">
 		$("#subpage_result").slideToggle(700);
 		document.getElementById("result_image").src = "images/result_active.png";
 		result_active = 1;
-		show_result = false;
 	</script>
 <%	
 }
@@ -308,10 +299,18 @@ var result_active = 0;
 
 <form id="result_form">
 <input id="result_parameter" name="result_parameter" type="hidden" />
+<script language="javascript">
+var result_number = 0;
+</script>
 <%
 if (request.getAttribute("stores") != null) {
 	@SuppressWarnings({ "unchecked" })
 	ArrayList<SaleStore> stores = (ArrayList<SaleStore>) request.getAttribute("stores");
+%>
+	<script language="javascript">
+	result_number = "<%=stores.size() %>";
+	</script>
+<%
 	if (stores.size() > 0) {
 		int m = 0;
 		for (SaleStore saleStore : stores) {
@@ -327,25 +326,14 @@ if (request.getAttribute("stores") != null) {
 				document.write("<img src='images/transparent.png' width='5' height='10' alt='transperant' /><br />");
 			</script>
 <%	
+			m++;
 		}
 	}
 }
-%>
-<!-- 
-<script language="javascript">
-for (var i = 0; i < stores.length; i++) {
-	var store_detail = stores[i].split("@,@");
-	document.write("<div class='result_checkbox'>");
-	document.write("<input id='result_checkbox" + i +"' type='checkbox' name='" + i + "'>");
-	document.write("<img src='" + store_detail[3] + "' width='27' height='27' />");
-	document.write("<font class='normal_font'>&nbsp;" + unescape(store_detail[0]) + ": </font>");
-	document.write("<a class='result_title_font' href='#' onClick=\"window.open(\'" + store_detail[2] + "\')\">" + unescape(store_detail[1]) + "</a><br />");
-	document.write("</input>");
-	document.write("</div><br />");
-	document.write("<img src='images/transparent.png' width='5' height='10' alt='transperant' /><br />");
+else {
+	ArrayList<SaleStore> stores = null;
 }
-</script>
- -->
+%>
 <br />
 
 <button id="choose_button" class="normal_button" >Choose</button>
@@ -356,6 +344,10 @@ for (var i = 0; i < stores.length; i++) {
 </div>
 <!-- End: subpage for result -->
 
+<script language="javascript">
+var search = window.location.search;
+document.write(search);
+</script>
 <!-- map operation -->
 <div id="map_canvas" class="map" align="center" />
 <!-- End: map operation -->
@@ -495,6 +487,7 @@ $(document).ready(function(){
 			alert("Error: Mile Radius should an integer.");
 			return;
 		}
+		document.getElementById("search_parameter").value = window.location.href;
 		form = document.getElementById("search_form");
 		form.action = "searchservlet";
 		form.method = "get";
@@ -503,7 +496,7 @@ $(document).ready(function(){
 	$("#choose_button").mousedown(function() {
 		var checked = false;
 		var checkedString = "";
-		for (var i = 0; i < stores.length; i++) {
+		for (var i = 0; i < result_number; i++) {
 			checkbox = document.getElementById("result_checkbox" + i);
 			if (checkbox.checked) {
 				checkedString = checkedString + "1";
@@ -517,20 +510,17 @@ $(document).ready(function(){
 			alert("Error: no store checked!");
 			return;
 		}
-		var choose_url = window.location.href;
-		var choose_header = choose_url.substr(0, choose_url.indexOf('?'));
-		choose_url = choose_url.substr(choose_url.indexOf("show_result=") + 13);
-		var new_url = choose_header + "?show_result=0" + "&checked=" + checkedString + choose_url;
-		
-		document.getElementById("result_parameter").value = new_url;
-		form = document.getElementById("result_form");
-		form.action = "/chooseservlet";
-		form.method = "post";
-		form.submit();
+		checkStrings = checkedString.split("");
+		choose_url = window.location.href + "&choose=" + checkedString;
+		alert(choose_url);
+		window.location = choose_url;
+// 		form = document.getElementById("result_form");
+// 		form.action = "/chooseservlet";
+// 		form.method = "post";
+// 		form.submit();
 	});
 });
 </script>
 <!-- End: jQuery -->
-
 </body>
 </html>

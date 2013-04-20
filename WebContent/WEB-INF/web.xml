@@ -2,20 +2,20 @@
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
   <display-name>Salechaser</display-name>
   <servlet>
-    <servlet-name>SearchServlet</servlet-name>
+    <servlet-name>Search</servlet-name>
     <servlet-class>salechaser.SearchServlet</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>SearchServlet</servlet-name>
+    <servlet-name>Search</servlet-name>
     <url-pattern>/searchservlet</url-pattern>
   </servlet-mapping>
   
   <servlet>
-    <servlet-name>ChooseServlet</servlet-name>
+    <servlet-name>Choose</servlet-name>
     <servlet-class>salechaser.ChooseServlet</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>ChooseServlet</servlet-name>
+    <servlet-name>Choose</servlet-name>
     <url-pattern>/chooseservlet</url-pattern>
   </servlet-mapping>
   
