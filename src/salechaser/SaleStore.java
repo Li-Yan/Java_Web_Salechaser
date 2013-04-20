@@ -20,6 +20,21 @@ public class SaleStore {
 	public double latitude;
 	public double longitude;
 	
+	public SaleStore(ResultSet result) throws SQLException {
+		this.ID = result.getString("id");
+		this.name = result.getString("name");
+		this.address = result.getString("address");
+		this.phone = result.getString("phone");
+		this.showImage = result.getString("showImage");
+		this.postDate = result.getString("postDate");
+		this.expirationDate = result.getString("expirationDate");
+		this.dealTitle = result.getString("dealTitle");
+		this.dealinfo = result.getString("dealinfo");
+		this.URL = result.getString("URL");
+		this.latitude = result.getDouble("latitude");
+		this.longitude = result.getDouble("longitude");
+	}
+	
 	public SaleStore(JSONObject object) {
 		String s = "";
 		if ((s = object.getString("ID")) != null) this.ID = s;
@@ -94,5 +109,51 @@ public class SaleStore {
 		}
 		db.DB_Close();
 		return needSearch;
+	}
+	
+	public static ArrayList<SaleStore> getStores(String searchWord) {
+		ArrayList<SaleStore> stores = new ArrayList<SaleStore>();
+		MemoryDB db = new MemoryDB();
+		String query = "SELECT * FROM stores WHERE searchWord='" + searchWord + "' ORDER BY resultid;";
+		System.out.println(query);
+		ResultSet result = db.ExecuteQuery(query);
+		try {
+			while (result.next()) {
+				stores.add(new SaleStore(result));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return stores;
+	}
+	
+	public static ArrayList<SaleStore> getStores(String searchWord, String chooseString) {
+		ArrayList<SaleStore> stores = new ArrayList<SaleStore>();
+		MemoryDB db = new MemoryDB();
+		String query = "SELECT * FROM stores WHERE searchWord='" + searchWord + "'";
+		String ss[] = chooseString.split("");
+		boolean add_AND = false;
+		for (int i = 0; i < ss.length; i++) {
+			if (ss[i].equals("1")) {
+				if (!add_AND) {
+					add_AND = true;
+					query += " AND (";
+				}
+				query += "resultid=" + (i - 1) + " OR ";
+			}
+		}
+		query = query.substring(0, query.length() - 4) + ") ORDER BY resultid;";
+		System.out.println(query);
+		ResultSet result = db.ExecuteQuery(query);
+		try {
+			while (result.next()) {
+				stores.add(new SaleStore(result));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return stores;
 	}
 }

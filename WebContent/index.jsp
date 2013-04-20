@@ -13,14 +13,32 @@
 <script type="text/javascript" src="./plugin/wTooltip.js"></script>
 <script type="text/javascript" src="./tool.js"></script>
 
-<% 
-String token = "";
-String check = "";
-if (request.getAttribute("token") != null) {
-	token = request.getAttribute("token").toString();
-	check = AccessToken.GetCheck(token);
-}
+<script type="text/javascript">
+	var map_stores = []; 
+</script>
+<% if (request.getParameter("choose") != null) {
+	String map_choose = request.getParameter("choose");
+	String map_search = request.getParameter("search");
+	ArrayList<SaleStore> map_stores = SaleStore.getStores(map_search, map_choose);
+	for (SaleStore saleStore : map_stores) {
 %>
+	<script type="text/javascript">
+		var store = {
+			name: "<%=saleStore.name %>",
+			address: "<%=saleStore.address %>",
+			phone: "<%=saleStore.phone %>",
+			showImage: "<%=saleStore.showImage %>",
+			expirationDate: "<%=saleStore.expirationDate %>",
+			dealTitle: "<%=saleStore.dealTitle %>",
+			URL: "<%=saleStore.URL %>",
+			latitude: "<%=saleStore.latitude %>" * 1,
+			longitude: "<%=saleStore.longitude %>" * 1
+		}; 
+		map_stores.push(store);
+	</script>
+<%
+	}
+}%>
 <!-- Google Maps API v3 -->
 <script type="text/javascript"
 src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-8-qkY0t5gIYFUS3N0OIJHbXMRDT3jNw&sensor=false">
@@ -68,17 +86,19 @@ src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-8-qkY0t5gIYFUS3N0OIJHbXM
 			}
 		  });
 		
-		alert(checkStrings);
+		for (var i = 0; i < map_stores.length; i++) {
+			addMarker(map_stores[i]);
+		}
 	}
 	
-	function addMarker(latitude, longitude, store_detail) {
+	function addMarker(store) {
 		//draw marker
-		var location = new google.maps.LatLng(latitude, longitude);
+		var location = new google.maps.LatLng(store.latitude, store.longitude);
 		marker = new google.maps.Marker({
 			position: location,
 			map: map,
 			icon : 'images/marker.png',
-			//html : marker_htmlMaker(store_detail),
+			html : marker_htmlMaker(store),
 			draggable: false,
 			animation: google.maps.Animation.DROP
 		});
@@ -288,8 +308,7 @@ var result_active = 0;
 
 <!-- subpage for result -->
 <div id="subpage_result" align="center" class="non_display_subpage">
-<% if (request.getAttribute("show_result") != null) {
-	request.removeAttribute("show_result");
+<% if (request.getParameter("show") != null) {
 %>
 	<script language="javascript">
 		$("#subpage_result").slideToggle(700);
@@ -307,19 +326,14 @@ var result_active = 0;
 <img src="images/transparent.png" width="5" height="3" alt="transperant" /><br />
 
 <form id="result_form">
-<input id="result_parameter" name="result_parameter" type="hidden" />
+<input id="choose_parameter" name="choose_parameter" type="hidden" />
 <script language="javascript">
 var result_number = 0;
 </script>
-<%
-if (request.getAttribute("stores") != null) {
-	@SuppressWarnings({ "unchecked" })
-	ArrayList<SaleStore> stores = (ArrayList<SaleStore>) request.getAttribute("stores");
-%>
-	<script language="javascript">
-	result_number = "<%=stores.size() %>";
-	</script>
-<%
+<% String search = "";
+if (request.getParameter("search") != null) {
+	search = request.getParameter("search");
+	ArrayList<SaleStore> stores = SaleStore.getStores(request.getParameter("search"));
 	if (stores.size() > 0) {
 		int m = 0;
 		for (SaleStore saleStore : stores) {
@@ -333,14 +347,12 @@ if (request.getAttribute("stores") != null) {
 				document.write("</input>");
 				document.write("</div><br />");
 				document.write("<img src='images/transparent.png' width='5' height='10' alt='transperant' /><br />");
+				result_number++;
 			</script>
 <%	
 			m++;
 		}
 	}
-}
-else {
-	ArrayList<SaleStore> stores = null;
 }
 %>
 <br />
@@ -380,7 +392,6 @@ $("#result_image").wTooltip({
 </script>
 <!-- End: Mouse over notification -->
 
-<%String checkedString = ""; %>
 <!-- jQuery -->
 <script type="text/javascript">
 $(document).ready(function(){
@@ -503,29 +514,32 @@ $(document).ready(function(){
 		var checked = false;
 		var checkedString = "";
 		for (var i = 0; i < result_number; i++) {
-			checkbox = document.getElementById("result_checkbox" + i);
-			if (checkbox.checked) {
-				checkedString = checkedString + "1";
-				"<%=checkedString += "1" %>";
-				checked = true;
+			if (document.getElementById("result_checkbox" + i) != null) {
+				checkbox = document.getElementById("result_checkbox" + i);
+				if (checkbox.checked) {
+					checkedString = checkedString + "1";
+					checked = true;
+				}
+				else {
+					checkedString = checkedString + "0";
+				}
 			}
 			else {
 				checkedString = checkedString + "0";
-				"<%=checkedString += "0" %>";
 			}
 		}
 		if (!checked) {
 			alert("Error: no store checked!");
-			return;
+			document.getElementById("choose_parameter").value = "show=1&search=<%=search %>";
 		}
-// 		checkStrings = checkedString.split("");
-// 		choose_url = window.location.href + "&choose=" + checkedString;
-// 		alert(choose_url);
-// 		window.location = choose_url;
-// 		form = document.getElementById("result_form");
-// 		form.action = "/chooseservlet";
-// 		form.method = "post";
-// 		form.submit();
+		else {
+			document.getElementById("choose_parameter").value = "search=<%=search %>&choose=" 
+				+ checkedString;
+		}
+		form = document.getElementById("result_form");
+		form.action = "chooseservlet";
+		form.method = "post";
+		form.submit();
 	});
 });
 </script>

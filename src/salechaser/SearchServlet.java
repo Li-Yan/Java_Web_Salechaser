@@ -13,8 +13,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -24,10 +22,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class SearchServlet extends HttpServlet {
-	/*
-	 * return URL format:
-	 * 	index.jsp?show_result=1&stores=name@,@dealTitle@,@URL@,@showImag@,@geocodee@,@expirationDate@,@address@,@phone@;@...
-	 */
 
 	private static final long serialVersionUID = -260652636708185564L;
 	private static final String api_8coupons_key = "d53d442c6196098bbf1455fec0df04c608077cb55278b4238781ded759b9dea7f2453f1ee46bb3090eb441c080a1b093";
@@ -125,12 +119,6 @@ public class SearchServlet extends HttpServlet {
 			SaleStore.saveStores(stores, date, searchWord);
 		}
 		
-		request.setAttribute("show_result", 1);
-		request.setAttribute("stores", stores);
-		
-		ServletContext sc = getServletContext();
-		RequestDispatcher rd = null;
-		rd = sc.getRequestDispatcher("/index.jsp");
-        rd.forward(request, response);
+		response.sendRedirect("index.jsp?show=1&search=" + searchWord);
 	}
 }
