@@ -12,6 +12,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -69,7 +72,8 @@ public class SearchServlet extends HttpServlet {
 		return stores;
 	}
 	
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+			throws IOException, ServletException {
 		HashMap<String, String> parameter = new HashMap<String, String>();
 		String zipcode = request.getParameter("zipcode_textField");
 		if (zipcode != null) {
@@ -97,9 +101,21 @@ public class SearchServlet extends HttpServlet {
 		}
 		parameter.put("limit", String.valueOf(SharedMemory.max_list));
 		
+		String urlString = request.getParameter("search_parameter");
+		if (urlString.indexOf("index.jsp") < 0) {
+			urlString = urlString + "index.jsp";
+		}
 		String result = saleSearch(parameter);
 		ArrayList<SaleStore> stores = parseResult(result);
+		request.setAttribute("show_result", 1);
+		request.setAttribute("stores", stores);
 		
+		ServletContext sc = getServletContext();
+		RequestDispatcher rd = null;
+		rd = sc.getRequestDispatcher("/index.jsp");
+        rd.forward(request, response);
+		
+		/*
 		String urlString = "../index.jsp?show_result=1";
 		if (stores.size() > 0) {
 			urlString = urlString + "&stores=";
@@ -113,7 +129,7 @@ public class SearchServlet extends HttpServlet {
 						"@,@" + saleStore.expirationDate + "@,@" + saleStore.address + "@,@" + saleStore.phone;
 			}
 		}
-		
-		response.sendRedirect(urlString);
+		*/
+		//response.sendRedirect(urlString);
 	}
 }

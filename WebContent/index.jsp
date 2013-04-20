@@ -1,5 +1,7 @@
-<%@page import="salechaser.SearchServlet" %>
-<%@page contentType="text/html; charset=UTF-8" language="java" import="java.sql.*" errorPage="" %>
+<%@ page import="salechaser.SearchServlet" %>
+<%@ page import="salechaser.SaleStore" %>
+<%@ page import="java.util.*" %>
+<%@ page contentType="text/html; charset=UTF-8" language="java" import="java.sql.*" errorPage="" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -12,7 +14,7 @@
 
 <!-- url initialization -->
 <script language="javascript">
-url_Parameters(location.search);
+//url_Parameters(location.search);
 </script>
 
 <!-- Google Maps API v3 -->
@@ -62,13 +64,13 @@ src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-8-qkY0t5gIYFUS3N0OIJHbXM
 			}
 		  });
 		
-		for (var i = 0; i < checked.length; i++) {
-			if (checked[i] == "1") {
-				var store_detail = stores[i].split("@,@");
-				var geocode = store_detail[4].split(',');
-				addMarker(geocode[0] * 1, geocode[1] * 1, store_detail);
-			}
-		}
+// 		for (var i = 0; i < checked.length; i++) {
+// 			if (checked[i] == "1") {
+// 				var store_detail = stores[i].split("@,@");
+// 				var geocode = store_detail[4].split(',');
+// 				addMarker(geocode[0] * 1, geocode[1] * 1, store_detail);
+// 			}
+// 		}
 	}
 	
 	function addMarker(latitude, longitude, store_detail) {
@@ -275,6 +277,7 @@ var result_active = 0;
 <img src="images/transparent.png" width="34" height="10" alt="transperant" />
 <input id="keyword_textField" name="keyword_textField" class="input_font" type="text" size="19" value="Empty is valid" onclick="this.select();"/><br />
 <img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
+<input id="search_parameter" name="search_parameter" type="hidden" />
 
 <button id="search_button" class="normal_button" >Search</button><br />
 </form>
@@ -285,14 +288,17 @@ var result_active = 0;
 
 <!-- subpage for result -->
 <div id="subpage_result" align="center" class="non_display_subpage">
-<script language="javascript">
-if (show_result) {
-	$("#subpage_result").slideToggle(700);
-	document.getElementById("result_image").src = "images/result_active.png";
-	result_active = 1;
-	show_result = false;
+<% if (request.getAttribute("show_result") != null) {
+%>
+	<script language="javascript">
+		$("#subpage_result").slideToggle(700);
+		document.getElementById("result_image").src = "images/result_active.png";
+		result_active = 1;
+		show_result = false;
+	</script>
+<%	
 }
-</script>
+%>
 <img src="images/separator.png" width="800" height="10" alt="separator" /><br />
 <label class="title_label">Result</label><br />
 <img src="images/transparent.png" width="5" height="5" alt="transperant" /><br />
@@ -302,6 +308,30 @@ if (show_result) {
 
 <form id="result_form">
 <input id="result_parameter" name="result_parameter" type="hidden" />
+<%
+if (request.getAttribute("stores") != null) {
+	@SuppressWarnings({ "unchecked" })
+	ArrayList<SaleStore> stores = (ArrayList<SaleStore>) request.getAttribute("stores");
+	if (stores.size() > 0) {
+		int m = 0;
+		for (SaleStore saleStore : stores) {
+%>
+			<script language="javascript">
+				document.write("<div class='result_checkbox'>");
+				document.write("<input id='result_checkbox" + "<%=m %>" + "' type='checkbox' name='" + "<%=m %>" + "'>");
+				document.write("<img src='" + "<%=saleStore.showImage %>" + "' width='27' height='27' />");
+				document.write("<font class='normal_font'>&nbsp;" + unescape("<%=saleStore.name %>") + ": </font>");
+				document.write("<a class='result_title_font' href='#' onClick=\"window.open(\'" + "<%=saleStore.URL %>" + "\')\">" + unescape("<%=saleStore.dealTitle %>") + "</a><br />");
+				document.write("</input>");
+				document.write("</div><br />");
+				document.write("<img src='images/transparent.png' width='5' height='10' alt='transperant' /><br />");
+			</script>
+<%	
+		}
+	}
+}
+%>
+<!-- 
 <script language="javascript">
 for (var i = 0; i < stores.length; i++) {
 	var store_detail = stores[i].split("@,@");
@@ -315,7 +345,7 @@ for (var i = 0; i < stores.length; i++) {
 	document.write("<img src='images/transparent.png' width='5' height='10' alt='transperant' /><br />");
 }
 </script>
-
+ -->
 <br />
 
 <button id="choose_button" class="normal_button" >Choose</button>
@@ -466,7 +496,7 @@ $(document).ready(function(){
 			return;
 		}
 		form = document.getElementById("search_form");
-		form.action = "salechaser/SearchServlet";
+		form.action = "searchservlet";
 		form.method = "get";
 		form.submit();
 	});
@@ -494,7 +524,7 @@ $(document).ready(function(){
 		
 		document.getElementById("result_parameter").value = new_url;
 		form = document.getElementById("result_form");
-		form.action = "salechaser/ChooseServlet";
+		form.action = "/chooseservlet";
 		form.method = "post";
 		form.submit();
 	});

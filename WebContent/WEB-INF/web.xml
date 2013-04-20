@@ -7,7 +7,7 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>SearchServlet</servlet-name>
-    <url-pattern>/salechaser/SearchServlet</url-pattern>
+    <url-pattern>/searchservlet</url-pattern>
   </servlet-mapping>
   
   <servlet>
@@ -16,7 +16,7 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>ChooseServlet</servlet-name>
-    <url-pattern>/salechaser/ChooseServlet</url-pattern>
+    <url-pattern>/chooseservlet</url-pattern>
   </servlet-mapping>
   
   <welcome-file-list>
