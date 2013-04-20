@@ -5,6 +5,8 @@ import java.util.HashMap;
 public class SharedMemory {
 	public static final int max_list = 10;
 	
+	public static String Context = "";
+	
 	public static final HashMap<String, String> categoryID = new HashMap<String, String>() {
 		private static final long serialVersionUID = 3131766601636547206L;
 	{

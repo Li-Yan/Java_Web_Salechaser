@@ -1,5 +1,6 @@
 <%@ page import="salechaser.SearchServlet" %>
 <%@ page import="salechaser.SaleStore" %>
+<%@ page import="salechaser.AccessToken" %>
 <%@ page import="java.util.*" %>
 <%@ page contentType="text/html; charset=UTF-8" language="java" import="java.sql.*" errorPage="" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -12,6 +13,14 @@
 <script type="text/javascript" src="./plugin/wTooltip.js"></script>
 <script type="text/javascript" src="./tool.js"></script>
 
+<% 
+String token = "";
+String check = "";
+if (request.getAttribute("token") != null) {
+	token = request.getAttribute("token").toString();
+	check = AccessToken.GetCheck(token);
+}
+%>
 <!-- Google Maps API v3 -->
 <script type="text/javascript"
 src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-8-qkY0t5gIYFUS3N0OIJHbXMRDT3jNw&sensor=false">
@@ -344,10 +353,6 @@ else {
 </div>
 <!-- End: subpage for result -->
 
-<script language="javascript">
-var search = window.location.search;
-document.write(search);
-</script>
 <!-- map operation -->
 <div id="map_canvas" class="map" align="center" />
 <!-- End: map operation -->
@@ -375,6 +380,7 @@ $("#result_image").wTooltip({
 </script>
 <!-- End: Mouse over notification -->
 
+<%String checkedString = ""; %>
 <!-- jQuery -->
 <script type="text/javascript">
 $(document).ready(function(){
@@ -500,20 +506,22 @@ $(document).ready(function(){
 			checkbox = document.getElementById("result_checkbox" + i);
 			if (checkbox.checked) {
 				checkedString = checkedString + "1";
+				"<%=checkedString += "1" %>";
 				checked = true;
 			}
 			else {
 				checkedString = checkedString + "0";
+				"<%=checkedString += "0" %>";
 			}
 		}
 		if (!checked) {
 			alert("Error: no store checked!");
 			return;
 		}
-		checkStrings = checkedString.split("");
-		choose_url = window.location.href + "&choose=" + checkedString;
-		alert(choose_url);
-		window.location = choose_url;
+// 		checkStrings = checkedString.split("");
+// 		choose_url = window.location.href + "&choose=" + checkedString;
+// 		alert(choose_url);
+// 		window.location = choose_url;
 // 		form = document.getElementById("result_form");
 // 		form.action = "/chooseservlet";
 // 		form.method = "post";

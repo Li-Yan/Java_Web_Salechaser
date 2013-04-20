@@ -7,6 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -80,17 +81,27 @@ public class SearchServlet extends HttpServlet {
 			if (!zipcode.equals("Empty is valid")) {
 				parameter.put("zipcode", zipcode);
 			}
+			else {
+				zipcode = "";
+			}
 		}
 		String mileradius = request.getParameter("mileradius_textField");
 		if (mileradius != null) {
 			if (!mileradius.equals("Empty is valid")) {
 				parameter.put("mileradius", mileradius);
 			}
+			else {
+				mileradius = "";
+			}
 		}
 		String category = request.getParameter("category_select");
 		if (category != null) {
 			if (!category.equals("any")) {
-				parameter.put("categoryid", SharedMemory.categoryID.get(category));
+				category = SharedMemory.categoryID.get(category);
+				parameter.put("categoryid", category);
+			}
+			else {
+				category = "";
 			}
 		}
 		String keyword = request.getParameter("keyword_textField");
@@ -98,11 +109,21 @@ public class SearchServlet extends HttpServlet {
 			if (!keyword.equals("Empty is valid")) {
 				parameter.put("search", keyword);
 			}
+			else {
+				keyword = "";
+			}
 		}
 		parameter.put("limit", String.valueOf(SharedMemory.max_list));
 		
 		String result = saleSearch(parameter);
 		ArrayList<SaleStore> stores = parseResult(result);
+		
+		String searchWord = zipcode + "," + mileradius + "," + category + "," + keyword;
+		Calendar cal = Calendar.getInstance();
+		int date = cal.get(Calendar.DATE);
+		if (SaleStore.needSearch(date, searchWord)) {
+			SaleStore.saveStores(stores, date, searchWord);
+		}
 		
 		request.setAttribute("show_result", 1);
 		request.setAttribute("stores", stores);
@@ -111,22 +132,5 @@ public class SearchServlet extends HttpServlet {
 		RequestDispatcher rd = null;
 		rd = sc.getRequestDispatcher("/index.jsp");
         rd.forward(request, response);
-		
-		/*
-		String urlString = "../index.jsp?show_result=1";
-		if (stores.size() > 0) {
-			urlString = urlString + "&stores=";
-			int m = 0;
-			for (SaleStore saleStore : stores) {
-				if (m == 0) m = 1;
-				else urlString = urlString + "@;@";		//using "@!@" to separate different stores
-				urlString = urlString + saleStore.name + "@,@" + saleStore.dealTitle + "@,@" + 
-						saleStore.URL + "@,@" + saleStore.showImage + "@,@" + 
-						String.valueOf(saleStore.latitude) + "," + String.valueOf(saleStore.longitude) +
-						"@,@" + saleStore.expirationDate + "@,@" + saleStore.address + "@,@" + saleStore.phone;
-			}
-		}
-		*/
-		//response.sendRedirect(urlString);
 	}
 }
