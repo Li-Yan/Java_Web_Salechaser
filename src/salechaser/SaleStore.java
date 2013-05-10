@@ -115,7 +115,6 @@ public class SaleStore {
 		ArrayList<SaleStore> stores = new ArrayList<SaleStore>();
 		MemoryDB db = new MemoryDB();
 		String query = "SELECT * FROM stores WHERE searchWord='" + searchWord + "' ORDER BY resultid;";
-		System.out.println(query);
 		ResultSet result = db.ExecuteQuery(query);
 		try {
 			while (result.next()) {
@@ -144,7 +143,6 @@ public class SaleStore {
 			}
 		}
 		query = query.substring(0, query.length() - 4) + ") ORDER BY resultid;";
-		System.out.println(query);
 		ResultSet result = db.ExecuteQuery(query);
 		try {
 			while (result.next()) {

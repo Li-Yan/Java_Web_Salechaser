@@ -51,6 +51,8 @@ src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-8-qkY0t5gIYFUS3N0OIJHbXM
 	var user_location;
 	var user_marker_locker = false;
 	var infowindow = new google.maps.InfoWindow({maxWidth: 800});
+	var current_index = 0;
+	var distance_matrix;
 	
 	function map_initialize() {
 		var mapOptions = {
@@ -64,6 +66,16 @@ src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-8-qkY0t5gIYFUS3N0OIJHbXM
 		google.maps.event.addListener(map, 'click', function(event) {
 			if (!user_marker_locker) {
 				user_location = event.latLng;
+				
+				var str = "";
+				for (var i = 0; i < map_stores.length; i++) {
+					for (var j = 0; j < map_stores.length; j++) {
+						str += distance_matrix[i][j].dur + " ";
+					}
+					str += "\n";
+				}
+				alert(str);			
+				
 				if (user_marker != null) user_marker.setMap(null);
 				user_marker = new google.maps.Marker({
 					position: user_location,
@@ -88,6 +100,21 @@ src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-8-qkY0t5gIYFUS3N0OIJHbXM
 		
 		for (var i = 0; i < map_stores.length; i++) {
 			addMarker(map_stores[i]);
+		}
+		
+		// distance_matrix 0 ~ map_stores.length - 1 for stores, 
+		distance_matrix = new Array(map_stores.length + 1);
+		for (var i = 0; i < map_stores.length + 1; i++) {
+			distance_matrix[i] = new Array(map_stores.length + 1);
+		}
+		for (var i = 0; i < map_stores.length; i++) {
+			var origins = [];
+			var destinations = [];
+			for (var j = 0; j < map_stores.length; j++) {
+				origins.push(new google.maps.LatLng(map_stores[i].latitude, map_stores[i].longitude));
+				destinations.push(new google.maps.LatLng(map_stores[j].latitude, map_stores[j].longitude));
+			}
+			calculateDistances(origins, destinations);
 		}
 	}
 	
@@ -125,7 +152,35 @@ src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-8-qkY0t5gIYFUS3N0OIJHbXM
 			infowindow.open(map, this);
 		});
 	}
-	
+
+	function calculateDistances(Origins, Destinations) {
+		var service = new google.maps.DistanceMatrixService();
+		service.getDistanceMatrix({
+			origins : Origins,
+			destinations : Destinations,
+			travelMode : google.maps.TravelMode.DRIVING,
+			unitSystem : google.maps.UnitSystem.METRIC,
+			avoidHighways : false,
+			avoidTolls : false
+		}, callbackDistance);
+	}
+
+	function callbackDistance(response, status) {
+		if (status != google.maps.DistanceMatrixStatus.OK) {
+			alert('Error was: ' + status);
+		} else {
+			for (var j = 0; j < response.rows.length; j++) {
+				var results = response.rows[j].elements;
+				var distance = {
+						dis: results[0].distance.text,
+						dur: results[0].duration.text
+				};
+				distance_matrix[current_index][j] = distance;
+			}
+			current_index++;
+		}
+	}
+
 	google.maps.event.addDomListener(window, 'load', map_initialize);
 </script>
 <!-- End: Google Maps API v3 -->
