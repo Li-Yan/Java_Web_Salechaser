@@ -11,34 +11,29 @@
 <script src="./plugin/jquery-1.9.1.min.js"></script>
 <link rel="Stylesheet" type="text/css" href="./plugin/wTooltip.css" />
 <script type="text/javascript" src="./plugin/wTooltip.js"></script>
+<script type="text/javascript" src="./plugin/json2.js"></script>
 <script type="text/javascript" src="./tool.js"></script>
 
-<script type="text/javascript">
-	var map_stores = []; 
-</script>
+<!-- 
+storeJSON is a JSON Array, use storeJSON.length to get its length
+each storeJSON[i] has the following attributes:
+	name;address;phone;showImage;expirationDate;dealTitle;URL;latitude;longitude
+-->
 <% if (request.getParameter("choose") != null) {
 	String map_choose = request.getParameter("choose");
 	String map_search = request.getParameter("search");
-	ArrayList<SaleStore> map_stores = SaleStore.getStores(map_search, map_choose);
-	for (SaleStore saleStore : map_stores) {
 %>
 	<script type="text/javascript">
-		var store = {
-			name: "<%=saleStore.name %>",
-			address: "<%=saleStore.address %>",
-			phone: "<%=saleStore.phone %>",
-			showImage: "<%=saleStore.showImage %>",
-			expirationDate: "<%=saleStore.expirationDate %>",
-			dealTitle: "<%=saleStore.dealTitle %>",
-			URL: "<%=saleStore.URL %>",
-			latitude: "<%=saleStore.latitude %>" * 1,
-			longitude: "<%=saleStore.longitude %>" * 1
-		}; 
-		map_stores.push(store);
+		var map_choose = "<%=map_choose%>";
+		var map_search = "<%=map_search%>";
+		var xmlhttp = new XMLHttpRequest();
+		xmlhttp.open("GET","chosenstoreservlet?choose=" + map_choose + "&search=" + map_search, false);
+		xmlhttp.send();
+		var storesJson = JSON.parse(xmlhttp.responseText);
 	</script>
-<%
-	}
-}%>
+<%}
+%>
+
 <!-- Google Maps API v3 -->
 <script type="text/javascript"
 src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-8-qkY0t5gIYFUS3N0OIJHbXMRDT3jNw&sensor=false">
@@ -65,16 +60,7 @@ src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-8-qkY0t5gIYFUS3N0OIJHbXM
 		
 		google.maps.event.addListener(map, 'click', function(event) {
 			if (!user_marker_locker) {
-				user_location = event.latLng;
-				
-				var str = "";
-				for (var i = 0; i < map_stores.length; i++) {
-					for (var j = 0; j < map_stores.length; j++) {
-						str += distance_matrix[i][j].dur + " ";
-					}
-					str += "\n";
-				}
-				alert(str);			
+				user_location = event.latLng;	
 				
 				if (user_marker != null) user_marker.setMap(null);
 				user_marker = new google.maps.Marker({
@@ -98,23 +84,8 @@ src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-8-qkY0t5gIYFUS3N0OIJHbXM
 			}
 		  });
 		
-		for (var i = 0; i < map_stores.length; i++) {
-			addMarker(map_stores[i]);
-		}
-		
-		// distance_matrix 0 ~ map_stores.length - 1 for stores, 
-		distance_matrix = new Array(map_stores.length + 1);
-		for (var i = 0; i < map_stores.length + 1; i++) {
-			distance_matrix[i] = new Array(map_stores.length + 1);
-		}
-		for (var i = 0; i < map_stores.length; i++) {
-			var origins = [];
-			var destinations = [];
-			for (var j = 0; j < map_stores.length; j++) {
-				origins.push(new google.maps.LatLng(map_stores[i].latitude, map_stores[i].longitude));
-				destinations.push(new google.maps.LatLng(map_stores[j].latitude, map_stores[j].longitude));
-			}
-			calculateDistances(origins, destinations);
+		for (var i = 0; i < storesJson.length; i++) {
+			addMarker(storesJson[i]);
 		}
 	}
 	
@@ -151,34 +122,6 @@ src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD-8-qkY0t5gIYFUS3N0OIJHbXM
 			infowindow.setContent(this.html);
 			infowindow.open(map, this);
 		});
-	}
-
-	function calculateDistances(Origins, Destinations) {
-		var service = new google.maps.DistanceMatrixService();
-		service.getDistanceMatrix({
-			origins : Origins,
-			destinations : Destinations,
-			travelMode : google.maps.TravelMode.DRIVING,
-			unitSystem : google.maps.UnitSystem.METRIC,
-			avoidHighways : false,
-			avoidTolls : false
-		}, callbackDistance);
-	}
-
-	function callbackDistance(response, status) {
-		if (status != google.maps.DistanceMatrixStatus.OK) {
-			alert('Error was: ' + status);
-		} else {
-			for (var j = 0; j < response.rows.length; j++) {
-				var results = response.rows[j].elements;
-				var distance = {
-						dis: results[0].distance.text,
-						dur: results[0].duration.text
-				};
-				distance_matrix[current_index][j] = distance;
-			}
-			current_index++;
-		}
 	}
 
 	google.maps.event.addDomListener(window, 'load', map_initialize);

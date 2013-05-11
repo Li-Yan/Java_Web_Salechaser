@@ -19,6 +19,15 @@
     <url-pattern>/chooseservlet</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+    <servlet-name>ChosenStore</servlet-name>
+    <servlet-class>salechaser.ChosenStoreServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ChosenStore</servlet-name>
+    <url-pattern>/chosenstoreservlet</url-pattern>
+  </servlet-mapping>
+  
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>

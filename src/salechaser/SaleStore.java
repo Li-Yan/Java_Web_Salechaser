@@ -36,6 +36,19 @@ public class SaleStore {
 	}
 	
 	public SaleStore(JSONObject object) {
+		this.ID = "";
+		this.name = "";
+		this.address = "";
+		this.phone = "";
+		this.showImage = "";
+		this.postDate = "";
+		this.expirationDate = "";
+		this.dealTitle = "";
+		this.dealinfo = "";
+		this.URL = "";
+		this.latitude = 0;
+		this.longitude = 0;
+		
 		String s = "";
 		if ((s = object.getString("ID")) != null) this.ID = s;
 		if ((s = object.getString("name")) != null) this.name = s;
@@ -80,8 +93,7 @@ public class SaleStore {
 		query += saleStore.longitude + ", ";
 		query += date + ", ";
 		query += "'" + searchWord + "');";
-		db.Execute(query);
-		return true;
+		return db.Execute(query);
 	}
 	
 	public static boolean saveStores(ArrayList<SaleStore> stores, int date, String searchWord) {
@@ -89,7 +101,9 @@ public class SaleStore {
 		db.Execute("DELETE FROM stores WHERE searchWord='" + searchWord + "';");
 		int index = 0;
 		for (SaleStore saleStore : stores) {
-			insertStore(db, saleStore, index++, date, searchWord);
+			if (insertStore(db, saleStore, index, date, searchWord)) {
+				index++;
+			}
 		}
 		db.DB_Close();
 		return true;

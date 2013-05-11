@@ -44,7 +44,7 @@ public class MemoryDB {
 	public void Table_Reset(String tableName) {
 		if (tableName.equalsIgnoreCase("stores")) {
 			Execute("DROP TABLE IF EXISTS stores;");
-			Execute("CREATE TABLE stores (id VARCHAR(32) PRIMARY KEY, resultid INTEGER, name VARCHAR(256), "
+			Execute("CREATE TABLE stores (id VARCHAR(32), resultid INTEGER, name VARCHAR(256), "
 				+ "address VARCHAR(256), phone VARCHAR(32), showImage VARCHAR(1024), postDate VARCHAR(64), "
 				+ "expirationDate VARCHAR(64), dealTitle VARCHAR(1024), dealinfo VARCHAR(1024), "
 				+ "URL VARCHAR(1024), latitude double, longitude double, date INTEGER, searchWord VARCHAR(1024));");
@@ -63,15 +63,17 @@ public class MemoryDB {
 		return result;
 	}
 	
-	public int Execute(String Query) {
+	public boolean Execute(String Query) {
 		PreparedStatement preparedStatement;
+		boolean succeed = true;
 		try {
 			preparedStatement = dbConnection.prepareStatement(Query);
 			preparedStatement.execute();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			succeed = false;
 		}
-		return 1;
+		return succeed;
 	}
 }
